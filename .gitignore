@@ -1,0 +1,9 @@
+!*.(cpp|md)
+*.swp
+
+
+# Ignore reference code
+/books/halim/src_ref/
+
+# Ignore binary files
+/books/*.(!(cpp|md))
