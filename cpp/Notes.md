@@ -20,10 +20,8 @@
 
 - **const**: not changing value
 - **constexpr**: evaluated at compile time
-  - function can also be **constexpr**
-    ```
-		constexpr double square(double x) {return x*x;}
-	```
+  - function can also be **constexpr** `constexpr double square(double x)`
+
   - used: array bounds, case labels, template value arguments
 
 
@@ -38,4 +36,24 @@
 - **nullptr**: no value present (avoids confiusion between integers `0/NULL` and pointers)
 - every test `if (cond); while (cond)` evaluates to true 
 
-### Chapter 2  
+- distinction: initialization vs assignment
+
+
+### Chapter 2 - User-Defined Types
+
+- STL: contains user-defined types (types defined in terms of built-in types [arrays, ...,])
+
+#### Structures
+
+```
+	struct Vector {
+		int m_size;
+		double* m_element;
+	}
+```
+
+#### Classes
+
+- set of members (functions/ type members)
+
+**CURRENT READING: p. 23**
