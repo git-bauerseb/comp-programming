@@ -2,9 +2,16 @@
 
 ## Book: A Tour of C++
 
+### Basic Principles
+
+- RAII (*Resource Acquisition Is Initialization*)
+  - constructor acquires all resources necessary for class to operate
+  - destructor release all resources
+
 ### Headers (Covered)
 
 <variant> - type-safe union alternative
+<stdexcept> - declaration of exceptions
 
 ### Chapter 1 - Basics
 
@@ -79,3 +86,54 @@
 - plain `enum` converted to int and visible in same scope as `enum`
 
 ### Chapter 3 - Modularity
+
+- declaration and definition can be separated
+
+- C++20: Modules
+
+#### Namespaces
+
+- `using` declaration makes a name from a namespace usable as if it was declared in the scope
+
+#### Error Handling
+
+- **throw**: transfers control to a handler for exceptions
+  - unwinds call stack 
+  - **catch** provides handler for exceptions
+
+- **noexcept**: function that should never throw exception
+  - if exeception thrown in `noexcept` function, `terminate()` will be called
+- throw in catch-clause: rethrow exception
+
+- `assert(condition)`: Condition that must hold during runtime
+- `static_assert(cond)`: Condition that must hold at compile time
+
+Default: **pass-by-value**
+  - refer to same object -> **pass-by-reference**
+
+- Function overloading supported
+
+- Only **return by reference** if granting caller access to something not local to function
+- Returing large amounts (e.g. matrix)
+  - give object a *move constructor* then move out of function (**no pointer needed**)
+
+- Structural binding supported
+
+```
+struct Entry {
+	string name;
+	int value;
+}
+
+Entry read_entry(istream& is) {
+	string name;
+	int value;
+	is >> name >> value;
+	return {name, value}
+}
+
+...
+
+auto [n,v] = read_entry(cin);
+```
+
