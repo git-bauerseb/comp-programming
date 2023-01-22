@@ -1,3 +1,4 @@
+#include <set>
 #include <vector>
 #include <string>
 #include <iostream>
@@ -6,6 +7,8 @@
 
 // C libraries
 #include <cstring>
+
+#include <cstdio>
 
 using namespace std;
 
@@ -20,87 +23,98 @@ struct Record {
 	string title;
 };
 
+bool compareRecord(const Record& a, const Record& b) {
+
+	if (a.author != b.author)
+		return a.author < b.author;
+
+	return a.title < b.title;
+}
+
 int main() {
 
 	char line[192];
 
 	vector<Record> records;
 
-	while ((fgets(line, 192, stdin)) != NULL) {
-		
-		int len = strlen(line);
-		line[len-1] = '\0';
-
-		string s_line{line};
-
-		// Line starts with "END"
-		if (s_line.length() > 2 && !s_line.compare(0, 3, "END")) {
-			break;
-		} else {
-			int idx = s_line.find("by");
-			int author_start = idx+3;
-			int author_length = s_line.length() - (author_start) + 1;
-
-			string title{};
-		   	string author{};
-
-			if (idx > 3)
-				title = s_line.substr(1, idx-3);
-			
-			
-			if (author_length > 0)
-				author = s_line.substr(author_start, author_length);
-
-			records.push_back({author, title});
-		}
-	}
-
-	sort(records.begin(), records.end(), [&](Record& a, Record& b) {
-		int cmp = a.author.compare(b.author);
-		if (!cmp) return a.title.compare(b.title);
-		return cmp;		
-	});
-
-	for (auto& r : records) {
-		cout << "Title: " << r.title << " Author: " << r.author << "\n";
-	}
-	
-	vector<int> returned{};
-	
 	while (fgets(line, 192, stdin) != NULL) {
-		int len = strlen(line);
-		line[len-1] = '\0';
-
-		string s_line{line};
-
-		// End of requests
-		if (s_line.length() > 2 && !s_line.compare(0, 3, "END")) {
+		int line_len = strlen(line);
+		line[line_len-1] = '\0';
 		
-			cout << "END\n";
-			break;
-		
-		} else if (s_line.length() > 5 && !s_line.compare(0,6,"RETURN")) {
+		string s{line};
 
-			int idx = s_line.find("\"");
-			
-			string title = s_line.substr(idx+1, s_line.length() - (idx+1) - 1);
-			
-			int index = lower_bound(records.begin(), records.end(), title, [](const Record& b, string a) {return a.compare(b.title);}) - records.begin();
-			
-			returned.push_back(index);
+		if (!s.compare(0, 3, "END")) break;
+		else {
+			int idx = s.find("\" ");
+			string title = s.substr(1, idx-1);
 
-		} else if (s_line.length() > 5 && !s_line.compare(0, 6, "SHELVE")) {
+			int author_len = s.size() - (idx+5);
+			if (author_len > 0) {
+				string author = s.substr(idx+5, author_len);
 
-			for (auto it = returned.begin(); it != returned.end(); it++) {
-				if (*it == 0) {
-					cout << "Put \"" << records[*it].title << "\" first\n";
-				} else
-					cout << "Put \"" << records[*it].title << "\" after \"" << records[*it-1].title << "\"\n";
+				Record r;
+				r.author = author;
+				r.title = title;
+				records.push_back(r);
 			}
 		}
 	}
 
 
+	// Sort records
+	sort(records.begin(), records.end(), compareRecord);
+
+	set<int> borrowed;
+	set<int> returned;
+
+	while (fgets(line, 192, stdin) != NULL) {
+		int line_len = strlen(line);
+		line[line_len-1] = '\0';
+
+		string s_line{line};
+
+		if (!s_line.compare(0, 3, "END")) break;
+		else if (s_line[0] == 'S') {
+
+			for (auto& e : returned) {
+			
+				int pred = e-1;
+				while (pred >= 0 
+						&& (borrowed.count(pred) > 0)) pred--;
+
+				if (pred < 0)
+					cout << "Put \"" << records[e].title << "\" first\n";
+				else
+					cout << "Put \"" << records[e].title 
+						 << "\" after \"" << records[pred].title << "\"\n";
+			}
+			cout << "END\n";
+			returned.clear();
+		} else {
+		
+			int idx = s_line.find("\"");
+			string title = s_line.substr(idx+1, s_line.length() - idx - 2);
+
+			int r_idx = 0;
+
+			// Find title in records
+			for (int i = 0; i < records.size(); i++) {
+				if (records[i].title == title) {
+					r_idx = i;
+					break;
+				}
+			}
+
+			// Borrow
+			if (s_line[0] == 'B') {
+				borrowed.insert(r_idx);
+			// Return
+			} else {
+				borrowed.erase(r_idx);
+				returned.insert(r_idx);
+			}
+		}
+	}
 
 
 	return 0;

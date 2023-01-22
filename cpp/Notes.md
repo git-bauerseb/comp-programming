@@ -2,6 +2,10 @@
 
 ## Book: A Tour of C++
 
+### Headers (Covered)
+
+<variant> - type-safe union alternative
+
 ### Chapter 1 - Basics
 
 - **type**: defines a set of possible values and a set of operations
@@ -55,5 +59,23 @@
 #### Classes
 
 - set of members (functions/ type members)
+- public members: define interface
 
-**CURRENT READING: p. 23**
+- constructor is guaranteed to initialize objects of its class
+
+- struct is a class with members public by default
+
+#### Union
+
+- **union** is a **struct** in which all members are allocated at the same address
+  - use **variant** as alternative
+
+#### Enumerations
+
+- type for enumerating values
+  - `enum class`: specifies that enumeration is strongly typed
+  - `Color x = Color{2}`
+
+- plain `enum` converted to int and visible in same scope as `enum`
+
+### Chapter 3 - Modularity
