@@ -1,4 +1,6 @@
 #include <iostream>
+#include <algorithm>
+#include <bitset>
 
 using namespace std;
 
@@ -57,9 +59,68 @@ void third(int A, int B, int C) {
 				}
 }
 
+void fourth() {
+	int i, n = 8, p[8] = {0,1,2,3,4,5,6,7};
+   	do {
+		// Check condition
+   	} while (next_permutation(p, p+n));	   
+}
+
+// 8 queens
+int rows[8], nQ;
+
+bool place(int r, int c) {
+	// Check previously placed queens
+	for (int i = 0; i != c; ++i) {
+		if (rows[i] == r || abs(r - rows[i])  == abs(c - i))
+			return false;
+	}
+	return true;
+}
+
+void backtrack(int c) {
+	if (c == 8) {
+		nQ++;
+	}
+
+	for (int r = 0; r != 8; ++r) {
+		if (place(r, c)) {
+			rows[c] = r;
+			backtrack(c+1);
+		}
+	}
+}
+
+
+// rw: rows
+// ld: left diagonal
+// rd: right diagonal
+bitset<30> rw, ld, rd;
+
+// nfQ: number of possible ways to place queens
+// nR: number of rows
+int nfQ, nR;
+
+void fasterNQueens(int c) {
+	if (c == nR) {++nfQ; return;}
+	for (int r = 0; r != nR; ++r)
+		if (!rw[r] && !ld[r-c+nR-1] && !rd[r+c]) {
+			rw[r] = ld[r-c+nR-1] = rd[r+c] = true;
+			fasterNQueens(c+1);
+			rw[r] = ld[r-c+nR-1] = rd[r+c] = false;
+		}
+}
+
 int main() {
 	// first();
 	// second(12);
-	third(10+23+9, 10*23*9, 10*10+23*23+9*9);
+	// third(10+23+9, 10*23*9, 10*10+23*23+9*9);
+	// backtrack(0);
+	// printf("Number of ways to plaxe 8 queens on 8x8 board: %d\n", nQ);
+	
+	nR = 14;
+	fasterNQueens(0);
+	printf("Number of ways: %d\n", nfQ);
+	
 	return 0;
 }
