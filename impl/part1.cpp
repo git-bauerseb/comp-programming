@@ -44,7 +44,8 @@ int partition(vector<int>& numbers, int l, int r) {
 
 // Quicksort
 //   Description: Sorting; Divide-and-Conquer
-//   Runtime: O(nlog(n))
+//   Runtime: O(n^2) [Worst-case]
+//   		  O(nlog(n)) [Average-case]
 //	 Memory: O(1)
 //
 // l: lower index (included)
@@ -136,6 +137,11 @@ void mergesort(vector<int>& numbers, vector<int>& aux, int l, int r) {
 	merge(numbers, aux, l, m, r);
 }
 
+
+// Mergesort
+//   Description: Sorting, Divide-and-conquer
+//   Runtime: O(nlog(n)) [Worst-case]
+//   Memory: O(n)
 void mergesort(vector<int>& numbers, int l, int r) {
 	vector<int> aux;
 	aux.resize(r-l);
@@ -143,15 +149,55 @@ void mergesort(vector<int>& numbers, int l, int r) {
 }
 
 
+// OWN SORTING ALGORITHM
+// Sort array numbers[l], ..., numbers[r-1]
+void mysort(vector<int>& numbers, int l, int r) {
+	if (l < r && numbers[l] > numbers[r-1])
+		swap(numbers[l], numbers[r-1]);
+
+	// l + 2 >= r
+	// l >= r - 2
+	// numbers[r-2], ..., numbers[r-1] => array of size at most 2
+	if (l + 2 >= r)
+		return;
+
+	int m = (r - l)/3;
+	mysort(numbers, l, r - m);
+	mysort(numbers, l + m, r);
+	mysort(numbers, l, r - m);
+}
+
+void mysort2(vector<int>& numbers, int l, int r) {
+	if (l < r && numbers[l] > numbers[r-1])
+		swap(numbers[l], numbers[r-1]);
+
+	if (l + 2 >= r)
+		return;
+
+	// Array of size 3
+	if (l + 3 >= r) {
+		if (numbers[l] > numbers[l+1])
+			swap(numbers[l], numbers[l+1]);
+		if (numbers[l+1] > numbers[l+2])
+			swap(numbers[l+1], numbers[l+2]);
+		if (numbers[l] > numbers[l+1])
+			swap(numbers[l], numbers[l+1]);
+		return;
+	}
+
+	int m = (r - l)/4;
+	mysort2(numbers, l, r - m);
+	mysort2(numbers, l + m, r);
+	mysort2(numbers, l, r - m);
+}
 
 
 int main() {
 	srand(42);
 	
 	auto mSort = [](vector<int>& numbers, int start, int end) {
-	 	 mergesort(numbers, 0, numbers.size());
+	 	 mysort2(numbers, 0, numbers.size());
 	};
-
 	testSortingAlgorithm(100, mSort);
 	return 0;
 }
