@@ -12,6 +12,7 @@
 #include <vector>
 
 #include <cstdlib>
+#include <cstring>
 
 using namespace std;
 
@@ -104,21 +105,24 @@ void merge(vector<int>& numbers, vector<int>& aux, int l, int m, int r) {
 	int lPtr = l;
 	int rPtr = m;
 
+	if (lPtr >= rPtr)
+		return;
+
 	int idx = l;
 	while (lPtr < m && rPtr < r) {
-		if (numbers[lPtr] <= numbers[rPtr]) {aux[idx++] = numbers[lPtr++];}
-		else {aux[idx++] = numbers[rPtr++];}
+		if (numbers[lPtr] <= numbers[rPtr]) {aux[idx] = numbers[lPtr]; idx++; lPtr++;}
+		else {aux[idx] = numbers[rPtr]; idx++; rPtr++;}
 	}
 
-	while (lPtr < m) {aux[idx++] = numbers[lPtr++];}
-	while (rPtr < r) {aux[idx++] = numbers[rPtr++];}
+	while (lPtr < m) {aux[idx] = numbers[lPtr]; idx++; lPtr++;}
+	while (rPtr < r) {aux[idx] = numbers[rPtr]; idx++; rPtr++;}
 
-	swap(aux, numbers);
+	memcpy(&numbers[l], &aux[l], (r-l)*sizeof(int));
 }
 
 
 void mergesort(vector<int>& numbers, vector<int>& aux, int l, int r) {
-	if (l >= r)
+	if (l + 1 >= r)
 		return;
 
 	int m = (l + r) / 2;
@@ -126,7 +130,7 @@ void mergesort(vector<int>& numbers, vector<int>& aux, int l, int r) {
 	// Recurse on numbers[l], ..., numbers[m-1]
 	mergesort(numbers, aux, l, m);
 	// Recurse on numbers[m], ..., numbers[r-1]
-	mergesort(numbers, aux, m + 1, r);
+	mergesort(numbers, aux, m, r);
 
 	// Merge sorted subarrays
 	merge(numbers, aux, l, m, r);
@@ -145,9 +149,9 @@ int main() {
 	srand(42);
 	
 	auto mSort = [](vector<int>& numbers, int start, int end) {
-		mergesort(numbers, 0, numbers.size());
+	 	 mergesort(numbers, 0, numbers.size());
 	};
 
-	testSortingAlgorithm(1,mSort);
+	testSortingAlgorithm(100, mSort);
 	return 0;
 }
