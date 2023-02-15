@@ -55,8 +55,6 @@ int main() {
 	for (int i = 1; i != n+1; ++i)
 		csum[i] = rsq(i);
 
-
-
 	sort(nums.begin(), nums.end(), greater<long long>());
 	sort(csum, csum+n+1, greater<long long>());
 

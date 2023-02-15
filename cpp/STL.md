@@ -6,6 +6,16 @@ The functions are sorted by their header
 
 ## <algorithm> 
 
+  lower_bound(begin, end, value)
+	
+	Iterator to first element in [begin, end) that does not satisfy element < value
+
+
+## <cctype>
+
+  int tolower(int ch)
+
+	convert character to lowercase
 
 ## <cstdio>
 
