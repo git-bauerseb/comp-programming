@@ -12,10 +12,8 @@ int evalPoly(vector<int>& coeff, int x) {
 }
 
 int main() {
-
 	int c;
 	cin >> c;
-
 
 	while (c--) {
 		int degree;
