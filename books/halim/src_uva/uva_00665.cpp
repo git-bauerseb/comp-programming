@@ -26,8 +26,15 @@ using namespace std;
 
 // Output
 template <typename T>
-void print_v(vector<T>& v) {cout << "{"; for (auto& x : v) cout << x << " "; cout << "\n";}
+void print_v(vector<T>& v) {cout << "{"; for (auto& x : v) cout << x << " "; cout << "}\n";}
 
+// Idea
+// <, > operators are not important as it is not known whether the false coin
+// is heavier or lighter.
+//
+// Consider 3 coins and 1 measurement, 1 < 3
+//  => then either 1 could be the false coin or 3
+//  => if we additionally know 1 = 2 then 3 is the false coin (which is heavier)
 int main() {
 	ios_base::sync_with_stdio(false);
 	cin.tie(0);
@@ -40,58 +47,33 @@ int main() {
 		int N, K;
 		cin >> N >> K;
 
-		bitset<10> coins;		
-
-		// 0 - less
-		// 1 - greater
-		// 2 - equal
-		vector<tuple<vector<int>, vector<int>, char>> weighting;
-		weighting.resize(K);
+		bool coins[103] = {false};
+		int left[103] = {0};
+		int right[103] = {0};
 
 		for (int i = 0; i != K; ++i) {
 			int pi;
 			cin >> pi;
-
-
-
-
-			for (int j = 0; j != pi; ++j) {
-				int idx;
-				cin >> idx;
-				get<0>(weighting[i]).push_back(idx);
-			}
-
-			for (int j = 0; j != pi; ++j) {
-				int idx;
-				cin >> idx;
-				get<1>(weighting[i]).push_back(idx);
-			}
-
-			cin >> get<2>(weighting[i]);
+			for (int j = 0; j != pi; ++j) {cin >> left[j];}
+			for (int j = 0; j != pi; ++j) {cin >> right[j];}
+			char c;
+			cin >> c;
+			if (c == '=')
+				for (int i = 0; i != pi; ++i) coins[left[i]] = coins[right[i]] = true;
 		}
 
 
-		for (auto& e : weighting) {
-			switch (get<2>(e)) {
-				case '<':
-					for (auto& co : get<0>(e)) {coins[co] = 1;} break;
-				case '>':
-					for (auto& co : get<1>(e)) {coins[co] = 1;} break;
-				case '=':
-					for (auto& co : get<0>(e)) coins[co] = 1;
-					for (auto& co : get<1>(e)) coins[co] = 1;
-					break;
-			}
-		}
 
-
-		int idx = 0;
+		int cnt = 0;
+		int ans = 0;
 		for (int i = 1; i <= N; ++i) {
-			if (!coins[i] && idx <= 0) idx = i;
-			else if (!coins[i] && idx >= 0) {idx = 0; break;}
+			if (!coins[i]) {cnt++; ans = i;}
 		}
 
-		cout << idx << "\n"; if (M != 0) cout << "\n";
+
+		if (cnt > 1 || cnt == 0) cout << "0\n";
+		else cout << ans << "\n";
+		if (M) cout << "\n";
 	}
 
 	return 0;
