@@ -1,0 +1,50 @@
+#include <iostream>
+#include <algorithm>
+#include <vector>
+#include <set>
+
+using namespace std;
+
+// Constants
+#define MOD 1'000'000'007
+
+// Simple types
+#define ll long long
+#define ld long double
+
+// Aggeragte types
+#define pii pair<int,int>
+#define pll pair<long,long>
+
+#define vi vector<int>
+#define vl vector<long>
+
+#define si set<int>
+#define sl set<long>
+
+// Output
+template <typename T>
+void print_v(vector<T>& v) {cout << "{"; for (auto& x : v) cout << x << " "; cout << "\n";}
+
+void solution() {
+	ll a, b; cin >> a >> b;
+	ll n, m; cin >> n >> m;
+
+	ll q = n / (m+1);
+	ll r = n - q*(m+1);
+	cout << (q * min(a*m, b*(m+1)) + r * min(a,b)) << "\n";
+}
+
+int main() {
+	ios_base::sync_with_stdio(false);
+	cin.tie(0);
+	cout.tie(0);
+
+	int tt;
+	cin >> tt;
+	while (tt--) {
+		solution();
+	}
+
+	return 0;
+}
