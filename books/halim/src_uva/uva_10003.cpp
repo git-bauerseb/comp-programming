@@ -116,7 +116,7 @@ void solution2() {
     }
 }
 
-int A[55];
+int A[57];
 int memo[1001][1001];
 
 int cut(int left, int right) {
@@ -163,7 +163,6 @@ void solution3() {
         }
         A[n+1] = l;
         memset(memo, -1, sizeof(memo));
-
         int ans = cut2(0, l);
         cout << ans << "\n";
     }
