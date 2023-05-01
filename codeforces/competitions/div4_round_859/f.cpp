@@ -68,7 +68,7 @@ void solution() {
 	int steps = 0;
 	int bounces = 0;
 	bool found = false;
-	while (steps < n*m*60) {
+	while (steps < n*m) {
 		if (i1 == i2 && j1 == j2) {found = true; break;}
 		// Check if in corner change direction
 		int oldDir = dir;

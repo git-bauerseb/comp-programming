@@ -6,8 +6,6 @@
 using namespace std;
 
 // Constants
-#define MOD 1'000'000'007
-
 // Simple types
 #define ll long long
 #define ld long double
@@ -28,13 +26,13 @@ void print_v(vector<T>& v) {cout << "{"; for (auto& x : v) cout << x << " "; cou
 
 int maxProd(vector<int>& nums) {
     int max_ = nums[0];
-    int cNeg = min(1, nums[0]);
-    int cPos = max(1, nums[0]);
+    int cNeg = nums[0];
+    int cPos = nums[0];
     for (int i = 1; i < nums.size(); ++i) {
-        max_ = max(max_, cPos * nums[i]);
-        max_ = max(max_, cNeg * nums[i]);
-        cNeg = min(nums[i], cNeg * nums[i]);
-        cPos = max(nums[i], cPos * nums[i]);
+        int oPos = cPos, oNeg = cNeg;
+        cPos = max(max(nums[i], cPos * nums[i]), oNeg * nums[i]);
+        cNeg = min(min(nums[i], cNeg * nums[i]), oPos * nums[i]);       
+        max_ = max(max_, cPos);
     }
     return max_;
 }
@@ -46,7 +44,7 @@ int main() {
     vector<int> numbers;
     int num;
     while (scanf("%d", &num) != EOF) {
-        if (num == -999'999) {
+        if (num == -999999) {
             cout << maxProd(numbers) << "\n";
             numbers.clear();
             continue;

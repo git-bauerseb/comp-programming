@@ -2,45 +2,44 @@
 
 using namespace std;
 
+#define ll long long
 
-long long a[200001];
-long long b[200001];
 
-long long c[200001];
-long long c1[200001];
+const int M_N = 200002;
+ll a[M_N];
+ll b[M_N];
+
+ll bPref[M_N];
+ll t[M_N];
+
+ll cnt[M_N];
+ll add[M_N];
 
 int main() {
 	ios_base::sync_with_stdio(false);
 	cin.tie(0);
 	cout.tie(0);
 
-	int t;
-	cin >> t;
-	while (t--) {
+	int tt;
+	cin >> tt;
 
+	while (tt--) {
 		int n;
 		cin >> n;
+		for (int i = 0; i != n; ++i) cin >> a[i];
+		for (int i = 0; i != n; ++i) cin >> b[i];
 
-		int offset = 0;
+		bPref[0] = b[0];
+		for (int i = 1; i != n; ++i) bPref[i] = b[i] + bPref[i-1];
 
-		for (int i = 0; i != n; ++i)
-			cin >> a[i];
-
-		for (int i = 0; i != n; ++i)
-			cin >> b[i];
-
-		while (offset < n) {
 		for (int i = 0; i != n; ++i) {
-			int consumed = 0;
-			for (int j = i-offset; j >= 0; j--) {
-				consumed += min(a[j], b[i]);
-				a[j] -= consumed;
-			}
 
-			cout << consumed;
-			cout << (i == (n-1) ? "\n" : " ");
-		}
-		offset++;
+			auto it = upper_bound(bPref, bPref + i, -1,
+					[](const ll element, const ll value {
+						return element < a[i] + prefB[i];	
+					});
+
+			int rem = a[i] - *it;
 		}
 	}
 

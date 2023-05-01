@@ -66,3 +66,12 @@ S = 40 = 000...0101000
 	C++ STL queue
 	push_back()/pop_front()
 	push_front()/pop_back()
+
+## Chapter 3
+
+### 3.5 Dynamic Programming
+
+- determine problem states and transitions between problem and sub-problem
+
+- primarily used: optimization/counting problems
+  - minimize/maximize/count -> high chance of DP

@@ -2,18 +2,23 @@
 
 using namespace std;
 
+typedef unsigned long long ull;
+
 int i,d,k;
-int P[20];
+
+// P[0] = c0
+// P[1] = c1
+// P[2] = c2
+//
+// P[i] = ci
+long long P[21];
 
 
 // P(x) = c0 + c1*x + c2*x^2 c3*x^3 = c0 + x*(c1 + x*(c2 + x*c3))
-//
-long evalPoly(int x) {
-	long v = 0;
-	for (int j = i; j > 0; --j) {
-		v = static_cast<long>(x)*static_cast<long>(v + P[j]);
-	}
-	return v + static_cast<long>(P[0]);
+ull eval(int n, ull currentNPowVals, int coeff){
+    if (coeff > deg)
+        return 0;
+    return P[coeff] * currentNPowVals + eval(n, n * currentNPowVals, coeff + 1);
 }
 
 void solution() {
@@ -24,10 +29,11 @@ void solution() {
 		nums += n*d; 
 	}
 
-	cout << evalPoly(n) << "\n";
+	cout << eval(n) << "\n";
 }
 
 int main() {
+	
 	ios_base::sync_with_stdio(false);
 	cin.tie(0);
 	cout.tie(0);

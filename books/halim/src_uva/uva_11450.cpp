@@ -32,7 +32,12 @@ int minMoney;
 // Memo for TD DP
 const int MONEY_MAX = 201;
 const int GARNET_MAX = 21;
-int DP[MONEY_MAX][GARNET_MAX];
+// int DP[MONEY_MAX][GARNET_MAX];
+
+bool REACHABLE[GARNET_MAX][MONEY_MAX];
+
+// Store predecessor to construct optimal solution
+int PRED[GARNET_MAX][MONEY_MAX];
 
 void shop(int M, vector<vector<int>> g, int c) {
 	if (M >= 0 && c >= g.size()) {
@@ -45,6 +50,7 @@ void shop(int M, vector<vector<int>> g, int c) {
 		}
 	}
 }
+
 
 void recBacktrackingSol() {
 	int M, C; cin >> M >> C;
@@ -84,6 +90,19 @@ int tdShop(int M, vector<vector<int>> g, int c) {
 	return m;
 }
 
+void printShop(int M, vector<vector<int>> g, int c) {
+	if (M <= 0 || c == g.size()) return;
+	
+	for (auto& e : g[c]) {
+		if (tdShop(M - e, g, c+1) == DP[M][c]) {
+			cout << DP[M][c] << "\n";
+			printShop(M-e, g, c+1);
+			break;
+		}
+	}
+}
+
+/*
 void tdDPSolution() {
 	int M, C; cin >> M >> C;
 	vector<vector<int>> garnets;
@@ -102,6 +121,40 @@ void tdDPSolution() {
 	if (m > M) cout << "no solution\n"; else cout << (M-m) << "\n";
 }
 
+void buDPSolution() {
+	int M, C; cin >> M >> C;
+	vector<vector<int>> garnets;
+	for (int i = 0; i != C; ++i) {
+		int k; cin >> k;
+		vector<int> nums; nums.resize(k);
+		for (int j = 0; j != k; ++j) {cin >> nums[j];}
+		garnets.push_back(nums);
+	}
+
+	int idx = 0;
+	for (auto& e : garnets[0]) {
+		REACHABLE[0][e] = true;
+	}
+
+	for (int i = 1; i != garnets.size(); ++i) {
+ 		for (int m = 0; m <= M; ++m) {
+		  	for (auto& e : garnets[i]) {
+			   if (REACHABLE[i-1][m] && m+e <= M) {
+					REACHABLE[i][m+e] = true;
+			   }
+		  }
+	   }	   
+	}
+
+	bool found = false;
+	for (int i = M; i >= 0; --i) {
+		if (REACHABLE[C-1][i]) {found = true; cout << i; break;}
+	}
+
+	if (!found) {cout << "no solution";}
+	cout << "\n";
+}
+*/
 
 int main() {
 	ios_base::sync_with_stdio(false);
@@ -112,7 +165,9 @@ int main() {
 	cin >> tt;
 	while (tt--) {
 		// recBacktrackingSol();
-		tdDPSolution();
+		// tdDPSolution();
+		// memset(REACHABLE, false, sizeof(REACHABLE));
+		// buDPSolution();
 	}
 
 	return 0;

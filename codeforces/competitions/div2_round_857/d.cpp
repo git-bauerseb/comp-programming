@@ -45,17 +45,25 @@ void solution() {
 		int curr = nums[i].second;
 
 		// Binary search on first gift
-		int l = 0; int r = n-1;
-		while (l < r) {
-			int m = l + (r - l) / 2;
-			if (nums[m].first < curr) {l = m+1;}
-			else {r = m;}
+		if (i > 0) {
+			int l = 0; int r = i-1;
+			while (l < r) {
+				int m = l + (r - l) / 2;
+				if (nums[m].first < curr) {l = m+1;}
+				else {r = m;}
+			}
+
+			minDiff = min(minDiff, abs(curr - nums[l].first));
 		}
 
-		if (l == i) {
-			if (l > 0) minDiff = min(minDiff, abs(curr - nums[l-1].first));
-			if (l < n) minDiff = min(minDiff, abs(curr - nums[l+1].first));			
-		} else {
+		if (i < n-1) {
+			int l = i+1; int r = n-1;
+			while (l < r) {
+				int m = l + (r - l) / 2;
+				if (nums[m].first < curr) {l = m+1;}
+				else {r = m;}
+			}
+
 			minDiff = min(minDiff, abs(curr - nums[l].first));
 		}
 	}

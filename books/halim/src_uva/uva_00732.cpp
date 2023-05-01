@@ -108,54 +108,14 @@ int main() {
 		output = string(l2);
 		const int n = output.size();
 
-		if (input.size() != output.size() || !isPerm(input, output)) { cout << "[\n]\n"; continue;}
+		if (input.size() != output.size() || !isPerm(input, output)) {
+			cout << "[\n]\n"; continue;
+		}
 	
 		vector<string> solutions;
 		stack<char> st;
 		string curr;
 		backtrack(solutions, st, curr, 0L, 0, 0);
-
-		/*
-		stack<char> s;
-		string constructed;
-		
-		int n = inp.size();
-		vector<string> seqs;
-
-		string perm; perm.resize(2*n);
-		for (int i = 0; i < 2*n; ++i) perm[i] = (i < n) ? 'i' : 'o';
-		do {
-				// 'o' at beginning invalid as poping from empty stack
-				if (perm[0] == 'o') continue;
-
-				int idx = 1;
-				int iPtr = 0;
-				bool valid = true;
-
-				for (auto& c : perm) {
-					if (c == 'i') {s.push(inp[iPtr++]);}
-					else {
-						if (s.empty()) {valid = false; break;}
-						constructed += s.top();
-						s.pop();
-					}
-				}
-
-				if (valid) {
-					// If constructed output equals expected output
-					// add to valid sequences
-					if (constructed == out) {
-						string validSeq(perm);
-						seqs.push_back(validSeq);
-					}
-				}
-
-				// Empty stack
-				while (!s.empty()) s.pop();
-				constructed.clear();
-		} while(next_permutation(perm.begin(), perm.end()));
-		*/
-
 		cout << "[\n";
 		sort(solutions.begin(), solutions.end());
 		for (int i = 0; i < solutions.size(); ++i) {
@@ -173,5 +133,3 @@ int main() {
 
 	return 0;
 }
-
-

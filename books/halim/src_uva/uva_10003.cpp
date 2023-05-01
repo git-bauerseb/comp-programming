@@ -116,23 +116,15 @@ void solution2() {
     }
 }
 
-int A[57];
-int memo[1001][1001];
-
-int cut(int left, int right) {
-    if (left+1 == right) return 0;
-    int& ans = memo[left][right];
-    if (ans != -1) return ans;
-    ans = 2e9;
-    for (int i = left + 1; i < right; ++i)
-        ans = min(ans,
-                cut(left, i) + cut(i, right) + (A[right] - A[left])
-                );
-    return ans;
-}
-
+// Top Down DP solution
+// Idea:
+//   - cut2(left, right) -> compute minimum cost for cutting stick s[left], ..., s[right]
+//     given the cutting position
+//   - for every possible cutting position, make a cut and calculate minimum
+//     for left & right stick
+//   - save results in memo
+/*
 int nG;
-
 int cut2(int left, int right) {
     if (left+1 == right) return 0;
     int& ans = memo[left][right];
@@ -147,10 +139,13 @@ int cut2(int left, int right) {
         }
     }
 
+    // If no cut can be performed, then set cost to 0 as only cuts contribute to cost
     if (ans == 2e9) ans = 0;
     return ans;
 }
+*/
 
+/*
 void solution3() {
     while (true) {
         int l; cin >> l;
@@ -164,13 +159,47 @@ void solution3() {
         A[n+1] = l;
         memset(memo, -1, sizeof(memo));
         int ans = cut2(0, l);
-        cout << ans << "\n";
+        cout << "The minimum cutting is " << ans << ".\n";
+    }
+}
+*/
+
+// memo[i][j] := Minimum cost after performing cuts i,...,j
+int memo[54][54];
+int A[54];
+
+int cut(int first, int last) {
+    if (first + 1 == last) return 0;    // No cut occuring
+    int& ans = memo[first][last];
+    if (ans != -1) return ans;
+    ans = 1E9;
+    for (int i = first+1; i < last; ++i) {
+        int left = cut(first, i);   // Minimum cost of performing cuts first, ..., i
+        int right = cut(i, last);   // Minimum cost of performing cuts i, ..., last
+        ans = min(left + right + A[last] - A[first], ans);
+    }
+    return ans;
+}
+
+void solution4() {
+    while (true) {
+        int l; cin >> l;
+        if (!l) break;
+        int n; cin >> n;
+        A[0] = 0;
+        for (int i = 1; i <= n; ++i) cin >> A[i];
+        A[n+1] = l;
+
+        memset(memo, -1, sizeof memo);
+        int ans = cut(0,n+1);
+        cout << "The minimum cutting is " << ans << ".\n";
     }
 }
 
 int main() {
 //    solution1();
 //    solution2();   
-    solution3();
+//    solution3();
+    solution4();
     return 0;
 }

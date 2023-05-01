@@ -117,7 +117,6 @@ int main() {
 	// third(10+23+9, 10*23*9, 10*10+23*23+9*9);
 	// backtrack(0);
 	// printf("Number of ways to plaxe 8 queens on 8x8 board: %d\n", nQ);
-	
 	nR = 14;
 	fasterNQueens(0);
 	printf("Number of ways: %d\n", nfQ);

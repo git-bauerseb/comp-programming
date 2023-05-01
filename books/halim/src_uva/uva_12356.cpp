@@ -44,12 +44,9 @@ int main() {
 
 		for (int i = 0; i != B; ++i) {
 			int l,r; cin >> l >> r;
-
-			if (RIGHT[r] >= 0)
 			LEFT[RIGHT[r]] = LEFT[l];
 			if (LEFT[l] != -1) cout << LEFT[l] << " ";
 			else cout << "* ";
-			if (LEFT[l] >= 0)
 			RIGHT[LEFT[l]] = RIGHT[r];
 			if (RIGHT[r] != -1) cout << RIGHT[r] << "\n";
 			else cout << "*\n";	

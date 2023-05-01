@@ -6,7 +6,7 @@
 using namespace std;
 
 // Constants
-#define MOD 1'000'000'007
+// #define MOD 1'000'000'007
 
 // Simple types
 #define ll long long
@@ -26,6 +26,7 @@ using namespace std;
 template <typename T>
 void print_v(vector<T>& v) {cout << "{"; for (auto& x : v) cout << x << " "; cout << "\n";}
 
+/*
 const int N_MAX = 22;
 
 // Coordinates (x,y,z)
@@ -85,6 +86,59 @@ void solution() {
 
     cout << max(m, H[a-1][b-1][c-1]) << "\n";
 }
+*/
+
+
+const int N_MAX = 30;
+// Dimensions: x,y,z
+ll A[N_MAX][N_MAX][N_MAX];
+
+// Solution using 2D Range sum and Kadane algorithm
+// Time complexity: O(n^5)
+void solution2() {
+    int a,b,c; cin >> a >> b >> c;
+
+    // Calculate prefix sum over first two dimensions
+    for (int i = 0; i < a; ++i) {
+        for (int j = 0; j < b; ++j) {
+            for (int k = 0; k < c; ++k) {
+                ll num; cin >> num;
+                A[i][j][k] = num;
+                if (i) A[i][j][k] += A[i-1][j][k];
+                if (j) A[i][j][k] += A[i][j-1][k];
+                if (i && j) A[i][j][k] -= A[i-1][j-1][k];
+            }
+        }
+    }
+
+
+    ll gSum = -1E12;
+    
+    // Loop over x,y coordinates
+    for (int i = 0; i < a; ++i) {
+        for (int j = 0; j < b; ++j) {
+            // Loop over all coordinates less than x,y
+            for (int k = 0; k <= i; ++k) {
+                for (int l = 0; l <= j; ++l) {
+                    ll cSum = -1E12;
+                    // Perform Kadane algorithm over z coordinate
+                    for (int m = 0; m < c; ++m) {
+                        ll element = A[i][j][m];
+                        if (l) element -= A[i][l-1][m];
+                        if (k) element -= A[k-1][j][m];
+                        if (l && k) element += A[k-1][l-1][m];
+                        cSum = max(element, cSum + element);
+                        gSum = max(cSum, gSum);
+                    }
+
+                }
+            }
+        }
+    }
+
+
+    cout << gSum << "\n";
+}
 
 int main() {
 	ios_base::sync_with_stdio(false);
@@ -94,7 +148,7 @@ int main() {
 	int tt;
 	cin >> tt;
 	while (tt--) {
-		solution();
+		solution2();
         if (tt) cout << "\n";
 	}
 
