@@ -1,9 +1,10 @@
 !*.(cpp|md)
 *.swp
-
+.vscode
+.json
 
 # Ignore reference code
 /books/halim/src_ref/
 
 # Ignore binary files
-/books/*.(!(cpp|md))
+/books/*.(!(cpp|md|h|c|hpp))
