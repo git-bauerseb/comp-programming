@@ -27,8 +27,10 @@ using namespace std;
 template <typename T>
 void print_v(vector<T>& v) {cout << "{"; for (auto& x : v) cout << x << " "; cout << "\n";}
 
-int memo[2003][2003];
+// int memo[2003][2003];
 
+/*
+// TLE
 class Solution {
     public:
         int minCut(string s) {
@@ -82,7 +84,156 @@ class Solution {
             return true;
         }
 };
+*/
 
+// WRONG IDEA
+// Idea: Calculate longest palindrome ending at every index
+//       Traverse back and count number of palindromes
+//       Result is num palindromes - 1
+// Wrong answer on: cabababcbc
+
+/*
+class Solution {
+
+    public:
+        int minCut(string s) {
+            const int n = s.size();
+
+            // Determine length of longest palindrome ending at index i
+            vector<int> dp(n+1, 0);
+            dp[0] = 0;
+            dp[1] = 1;
+
+            for (int i = 2; i <= n; ++i) {
+                int& entry = dp[i];
+                entry = s[i-1] == s[i-2] ? 2 : 1;
+                entry = s[i-1] == s[i - 1 - dp[i-1]] ? dp[i-1] + 1 : entry;
+
+                if (i - 2 - dp[i-1] >= 0) {
+                    char prev = s[i - 2 - dp[i-1]];
+                    entry = s[i-1] == prev ? dp[i-1] + 2 : entry;
+                }
+            }
+
+            int minCuts = 0;
+            int rem = n;
+
+            while (rem > 0) {
+                rem -= dp[rem];
+                minCuts++;
+            }
+
+            return minCuts-1;
+        }
+};
+*/
+
+// Time: O(n^3)
+
+/*
+class Solution {
+
+    public:
+        int minCut(string s) {
+            const int n = s.size();
+            m_s = s;
+
+            m_memo.resize(n+1, vector<int>(n+1, -1));
+            m_palin.resize(n+1, vector<bool>(n+1, false));
+            setup();
+            return topDown(0, s.size()-1);
+        }
+
+    private:
+        
+        void setup() {
+            const int n = m_s.size();
+            for (int i = 0; i < n; ++i) {m_palin[i][i] = true;}
+            for (int i = 0; i < n-1; ++i) {m_palin[i][i+1] = m_s[i] == m_s[i+1];}
+            
+            // String s[i, ...., j] is palindrome if s[i] == s[j] and
+            // s[i+1, ..., j-1] is palindrome
+            for (int k = 2; k < n; ++k) {
+                for (int i = 0; i + k < n; ++i) {
+                    m_palin[i][i+k] = m_s[i] == m_s[i+k] && m_palin[i+1][i+k-1];
+                }
+            }
+        }
+
+        // Minimum number of cuts to partition s[start, ..., end] into palindromes
+        int topDown(int start, int end) {
+            int& entry = m_memo[start][end];
+            if (entry >= 0) return entry;
+            if (m_palin[start][end]) {entry = 0; return 0;}
+            
+            // not necessary, as m_palin[start][start] is true
+            // if (end == start) {entry = 0; return 0;}
+            
+            if (end == start+1) {
+                entry = m_s[start] != m_s[end] ? 1 : 0;
+                return entry;
+            }
+
+            int m = 1 << 29;
+
+            for (int pos = start; pos < end; ++pos) {
+                m = min(m, topDown(start, pos) + topDown(pos+1, end) + 1);
+            }
+
+            entry = m;
+            return m;
+        }
+
+        vector<vector<int>> m_memo;
+        
+        // m_palin[i][j] = true iff s[i, ..., j] is palindrome
+        vector<vector<bool>> m_palin;
+        
+        string m_s;
+};
+*/
+
+
+class Solution {
+
+    public:
+        int minCut(string s) {
+            m_s = s;
+            setup();
+
+            const int n = m_s.size();
+            vector<int> dp(n+1, 10000);
+
+            for (int i = 0; i < n; ++i) {
+                int& entry = dp[i];
+                if (m_pal[0][i]) {entry = 0; continue;}
+
+                for (int j = i; j >= 1; --j) {
+                    if (m_pal[j][i])
+                        entry = min(entry, dp[j-1] + 1);
+                }
+            }
+
+            return dp[n-1];
+        }
+
+        void setup() {
+            const int n = m_s.size();
+            m_pal.resize(n+1, vector<bool>(n+1, false));
+        
+            for (int i = 0; i < n; ++i) {m_pal[i][i] = true;}
+            for (int i = 0; i < n-1; ++i) {m_pal[i][i+1] = m_s[i] == m_s[i+1];}
+            for (int j = 2; j < n; ++j) {
+                for (int i = 0; i + j < n; ++i) {
+                    m_pal[i][i+j] = m_pal[i+1][i+j-1] && m_s[i] == m_s[i+j];
+                }
+            }
+        }
+
+    private:
+        string m_s;
+        vector<vector<bool>> m_pal;
+};
 
 int main() {
 	ios_base::sync_with_stdio(false);
@@ -90,7 +241,7 @@ int main() {
 	cout.tie(0);
 
     Solution solution{};
-    int mCut = solution.minCut("abcdefg");
+    int mCut = solution.minCut("aabbc");
     cout << mCut << "\n";
 	return 0;
 }
