@@ -5,7 +5,6 @@
 using namespace std;
 
 class Solution {
-
     public:
         int countRangeSum(vector<int>& nums, long lower, long upper) {
             const int n = nums.size();
@@ -33,9 +32,9 @@ class Solution {
                 dQ(nums, l, m);
                 dQ(nums, m+1, r);
 
-                int rPtr = m+1;
-
+                /*
                 // Naive solution: O(n^2)
+                // Here: O(nlog(n))
                 for (int i = l; i <= m; ++i) {
                     // First element !(< lo + si) <=> >= lo + si
                     auto it = lower_bound(nums.begin()+m+1, nums.begin()+r+1, m_lower + nums[i]);
@@ -43,6 +42,23 @@ class Solution {
                     auto it2 = lower_bound(it, nums.begin()+r+1, m_higher + nums[i] + 1);
 
                     m_count += max(0, (int)(it2 - it));
+                }
+                */
+
+                
+                // Points to lowest index in right array s.t. left[i] - right[lPtr] >= low
+                int lPtr = m+1;
+
+                // Points to highest index in right array s.t. right[rPtr] - left[i] <= hi
+                int rPtr = m+1;
+
+
+                // Number of valid sums is then (rPtr - lPtr + 1)
+                for (int i = l; i <= m; ++i) {
+                    int oLeft = lPtr;
+                    while (rPtr <= r && nums[rPtr] - nums[i] <= m_higher) rPtr++;
+                    while (lPtr <= r && nums[lPtr] - nums[i] < m_lower) lPtr++;
+                    m_count += max(0, rPtr - lPtr);
                 }
 
                 merge(nums, l, m, r);
@@ -90,10 +106,10 @@ int main() {
     // 100 + -100 -1 = -1
     // 100 + -100 -1 + 0 = -1
     
-    vector<int> nums{-2, 5, -1};
+    vector<int> nums{2147483647,-2147483648,-1,0};
 
     Solution solution{};
-    int c = solution.countRangeSum(nums, -2, 2);
+    int c = solution.countRangeSum(nums, -1,0);
 
     cout << c << "\n";
 
