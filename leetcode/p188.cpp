@@ -6,7 +6,11 @@ using namespace std;
 /*
  Idea 1: DP
 
+ Time complexity: O(trans. * days^2)
+
 */
+
+/*
 class Solution {
 
     public:
@@ -30,7 +34,7 @@ class Solution {
             // Base case: satisfied
             for (int d = 1; d <= n; ++d) {
                 for (int t = 1; t <= k; ++t) {
-                    dp[d][t] = dp[d-1][t];
+                        dp[d][t] = max(dp[d-1][t]);
 
                     for (int i = d-1; i >= 0; --i) {
                         int diff = prices[d-1] - prices[i];
@@ -44,13 +48,32 @@ class Solution {
             return dp[n][k];
         }
 };
+*/
+
+class Solution {
+
+    public:
+        int maxProfit(int k, vector<int>& prices) {
+            const int n = prices.size();
+            vector<vector<int>> dp(n+2, vector<int>(k+2,0));
+            for (int t = 1; t <= k; ++t) {
+                int cMax = -prices[0];
+                for (int d = 1; d <= n; ++d) {
+                    int& entry = dp[d][t];
+                    entry = max(cMax + prices[d-1], dp[d-1][t]);
+                    cMax = max(cMax, dp[d-1][t-1] - prices[d-1]);
+                }
+            }
+
+            return dp[n][k];
+        }
+};
+
 
 int main() {
 
-    int k = 100;
-    vector<int> prices(1000,0);
-
-    for (int i = 0; i < 1000; ++i) prices[i] = (2*i*i) % 107 + (i*i*i) % 51;
+    int k = 2;
+    vector<int> prices{2,4,1};
 
     Solution solution{};
     int m = solution.maxProfit(k, prices);
