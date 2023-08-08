@@ -4,7 +4,8 @@
 using namespace std;
 
 /*
-    Proof:
+
+    Proof (NOT A PROOF):
 
     max(down + up) = max(down) + max(up | using cherries not picked in down phase)
 
@@ -12,6 +13,9 @@ using namespace std;
         => there exists a cherry not picked in either down/up phase
         => if not picked in down phase, it can be picked in up phase
         => if not picked in up phase, then can be added to down phase
+
+
+    WRONG IDEA:
 
     Idea wrong (Phases are not independent):
         - Maximizing down and then maximizing up phase is not optimal

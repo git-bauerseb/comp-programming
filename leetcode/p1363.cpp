@@ -4,139 +4,117 @@
 #include <cstring>
 #include <algorithm>
 
-using namespace std;
-
 /*
-// Solution WRONG
-//  => This type of greedy does not work here
-class Solution {
+    Strategy for selecting remaining numbers:
 
-    public:
-        string largestMultipleOfThree(vector<int>& digits) {
-            const int n = digits.size();
-            int dCount[10];
-            memset(dCount, 0, sizeof(dCount));
-            for (int i = 0; i < n; ++i) {dCount[digits[i]]++;}
+    If 2*min(1s, 2s) > 3 => take min(1s,2s) 1s and 2s 
 
+    1 1 1 2 2 2 2 2 2
 
-            string result;
+    (1,2), (1,2), (1,2) 2
 
-            // Add 0, 6, 9
-            result.append(dCount[0], '0');
-            result.append(dCount[3], '3');
-            result.append(dCount[6], '6');
-            result.append(dCount[9], '9');
-            dCount[0] = 0;
-            dCount[3] = 0;
-            dCount[6] = 0;
-            dCount[9] = 0;
+    Proof of optimal length:
 
+    Case 1: Suppose same number of 1s/2s, then all can be selected greedily.
+            => Optimal length
 
-            while (true) {
-                // Check if there exist 3 digits = 1 mod 3
-                int a = largestMod(dCount, 1, true);
-                int b = largestMod(dCount, 1, true);
-                int c = largestMod(dCount, 1, true);
-                int num1 = a * 10*10 + b * 10 + c;
-                bool three1 = (a > 0) && (b > 0) && (c > 0);
+    Case 2: Suppose number of 2s > number of 1s (Same for symmetric case).
+            => Then greedy algorithm leaves some 2s
 
-                // Check if there exist 3 digits = 2 mod 3
-                int d = largestMod(dCount, 2, true);
-                int e = largestMod(dCount, 2, true);
-                int f = largestMod(dCount, 2, true);
-                int num2 = d * 10*10 + e * 10 + f;
-                bool three2 = (d > 0) && (e > 0) && (f > 0);
+            The only case where no numbers can be greedily formed but by 2s only
+            is 2 2 2. But since
+2*min(1s, 2s) > 3
+            2min(1s,2s) > 3 = 2*1s > 3
 
-
-                // Both exist, so use greater
-                if (three1 && three2) {
-                    if (num1 > num2) {
-                        dCount[d]++; dCount[e]++; dCount[f]++;
-                        result.append(1, '0' + a);
-                        result.append(1, '0' + b);
-                        result.append(1, '0' + c);
-                    } else {
-                        dCount[a]++; dCount[b]++; dCount[c]++;
-                        result.append(1, '0' + d);
-                        result.append(1, '0' + e);
-                        result.append(1, '0' + f);
-                    }
-                } else if (three1 && !three2) {
-                    if (d >= 0) dCount[d]++;
-                    if (e >= 0) dCount[e]++;
-                    if (f >= 0) dCount[f]++;
-                    result.append(1, '0' + a);
-                    result.append(1, '0' + b);
-                    result.append(1, '0' + c);
-                } else if (three2 && !three1) {
-                    if (a >= 0) dCount[a]++;
-                    if (b >= 0) dCount[b]++;
-                    if (c >= 0) dCount[c]++;
-                    result.append(1, '0' + d);
-                    result.append(1, '0' + e);
-                    result.append(1, '0' + f);
-                } else if (a >= 0 && d >= 0) {
-                    if (b >= 0) dCount[b]++;
-                    if (c >= 0) dCount[c]++;
-                    if (e >= 0) dCount[e]++;
-                    if (f >= 0) dCount[f]++;
-                    result.append(1, '0' + a);
-                    result.append(1, '0' + d);
-                } else {
-                    break;
-                }
-            }
-            sort(result.begin(), result.end(), std::greater<char>());
-            if (result[0] == '0') return result.substr(0, 1);
-            return result;
-        }
-
-        int largestMod(int count[10], int mod, bool sub) {
-            int res = -1;
-            for (int i = 9; i >= 0; --i) {
-                if ((count[i] > 0) && (i % 3) == mod) {
-                    res = i;
-                    if (sub) count[i]--;
-                    break;
-                }
-            }
-            return res;
-        }
-};
+            the greedily selected numbers form a number with greater length.
 */
 
-int dp[100][3];
+
+using namespace std;
 
 class Solution {
 
+    int digits[10];
+
     public:
-        int largestMultipleOfThree(vector<int>& digits) {
-            const int n = digits.size();
-            memset(dp, 0, sizeof(dp));
-            dp[0][digits[0] % 3] = 1;
+        string largestMultipleOfThree(vector<int>& dig) {
+            const int n = dig.size();
+            memset(digits, 0, sizeof(digits));
 
-            for (int i = 1; i < n; ++i) {
-                int cDigit = digits[i];
+            int oMod = 0;
+            int tMod = 0;
 
-                // Suppose cDigit = 2 mod 3
-                // Then i can make a longer number ending in 0 mod 3
-                // by adding cDigit to number 1 mod 3
+            string output;
 
-
-                dp[i][cDigit % 3] = 1 + dp[i][cDigit % 3]
+            for (int i = 0; i < n; ++i) {
+                int cd = dig[i];    
+                if (cd % 3 == 0) {
+                    output += cd + '0';
+                } else if (cd % 3 == 1) {
+                    oMod++;
+                    digits[cd]++;
+                } else {
+                    tMod++;
+                    digits[cd]++;
+                }
             }
 
-            return dp[n][0];
+            while (true) {
+                if (2*min(oMod, tMod) > 3) {
+                    for (int i = 0; 2*min(oMod, tMod) > 3; ++i) {
+                        output += largestMod(1) + '0';
+                        output += largestMod(2) + '0';
+                        oMod -= 1;
+                        tMod -= 1;
+                    }
+                } else if (tMod > 2) {
+                    for (int i = 0; i < 3; ++i) output += largestMod(2) + '0';
+                    tMod -= 3;
+                } else if (oMod > 2) {
+                    for (int i = 0; i < 3; ++i) output += largestMod(1) + '0';
+                    oMod -= 3;
+                } else {break;}
+            }
+
+            int bound = min(oMod, tMod);
+            for (int i = 0; i < bound; ++i) {
+                output += largestMod(1) + '0';
+                output += largestMod(2) + '0';
+            }
+
+            sort(output.begin(), output.end(), std::greater<char>());
+            
+            
+            if (output[0] == '0' && output[output.size()-1] == '0' && output.size() > 0) {
+                return "0";
+            }
+            
+            return output;
+        }
+
+        int largestMod(int rem) {
+            for (int i = 9; i >= 1; --i) {
+                if (i % 3 == rem && digits[i] > 0) {digits[i]--; return i;}
+            }
+            return -1;
         }
 };
 
-
-
 int main() {
-    vector<int> nums{2,2,2,1,1,1};
-    Solution solution{};
-    int s = solution.largestMultipleOfThree(nums);
-    cout << s << "\n";
 
+    // 7 1 2 4 4 8
+
+    // Expected: 87441000
+    // Output:   8742000
+
+    // 1 mod: 7 4 4 1
+    // 2 mod: 8 2
+
+    // vector<int> digits{8,7,4,4,2,1};
+    vector<int> digits{7,1,2,4,0,0,4,0,3,8};
+
+    Solution solution{};
+    string s = solution.largestMultipleOfThree(digits);
+    cout << s << "\n";
     return 0;
 }
